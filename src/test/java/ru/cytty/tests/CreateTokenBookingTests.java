@@ -1,3 +1,4 @@
+
 package ru.cytty.tests;
 
 import io.restassured.RestAssured;
@@ -5,21 +6,38 @@ import io.restassured.response.Response;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.cytty.dao.CreateTokenRequest;
+import ru.cytty.dao.CreateTokenResponse;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class CreateTokenBookingTests {
+    private static final String PROPERTIES_FILE_PATH = "src/test/resources/application.properties";
+    private static CreateTokenRequest request;
+    private static CreateTokenResponse response;
+    static Properties properties = new Properties();
+
 
     @BeforeAll
-    static void beforeAll() {
+    static void beforeAll() throws IOException {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
+        RestAssured.baseURI = properties.getProperty("base.url");
+        request = CreateTokenRequest.builder()
+                .username(properties.getProperty("username"))
+                .password(properties.getProperty("password"))
+                .build();
     }
 
     @Test
     void createTokenPositiveTest() {
-        given() //предусловия, подготовка
+        response = given()
                 .log()
                 .method()
                 .log()
@@ -27,15 +45,16 @@ public class CreateTokenBookingTests {
                 .log()
                 .body()
                 .header("Content-Type", "application/json")
-                .body("{\n"
-                        + "     \"username\" : \"admin\",\n"
-                        + "     \"password\" : \"password123\"\n"
-                        + "}")
+                .body(request)
+                .expect()
+                .statusCode(200)
                 .when() // шаг(и)
-                .post("https://restful-booker.herokuapp.com/auth")
+                .post("/auth")
                 .prettyPeek()
-                .then() //проверки
-                .statusCode(200);
+                .then()
+                .extract()
+                .as(CreateTokenResponse.class);
+        assertThat(response.getToken().length(), equalTo(15));
     }
 
     @Test
@@ -48,12 +67,9 @@ public class CreateTokenBookingTests {
                 .log()
                 .body()
                 .header("Content-Type", "application/json")
-                .body("{\n"
-                        + "     \"username\" : \"admin\",\n"
-                        + "     \"password\" : \"password\"\n"
-                        + "}")
-                .when() // шаг(и)
-                .post("https://restful-booker.herokuapp.com/auth")
+                .body(request.withPassword("password"))
+                .when()
+                .post("/auth")
                 .prettyPeek()
                 .then() //проверки
                 .statusCode(200)
@@ -70,17 +86,16 @@ public class CreateTokenBookingTests {
                 .log()
                 .body()
                 .header("Content-Type", "application/json")
-                .body("{\n"
-                        + "     \"username\" : \"admin123\",\n"
-                        + "     \"password\" : \"password\"\n"
-                        + "}")
+                .body(request.withUsername(properties.getProperty("username") + "123"))
                 .when() // шаг(и)
-                .post("https://restful-booker.herokuapp.com/auth")
+                .post("/auth")
                 .prettyPeek();
         assertThat(response.statusCode(), equalTo(200));
         assertThat(response.body().jsonPath().get("reason"), containsStringIgnoringCase("Bad credentials"));
     }
 
+
+    //оставила для памяти c комментами
     @Test
     void createTokenWithAWrongUsernameAndPasswordNegative2Test() {
         given() //предусловия, подготовка
@@ -91,16 +106,12 @@ public class CreateTokenBookingTests {
                 .log()                                                 // ЛОГИРУЕМ
                 .body()                                                    // -тело
                 .header("Content-Type", "application/json")      // ПОДГОТАВЛИВАЕМ ЗАГОЛОВОК
-                .body("{\n"                                            // ПОДГОТАВЛИВАЕМ ТЕЛО
-                        + "     \"username\" : \"admin\",\n"
-                        + "     \"password\" : \"password123\"\n"
-                        + "}")
+                .body(request)
                 .expect()                                              // ПРОВЕРЯЕМ
                 .statusCode(200)                                            // -статус код
-                .body("token", is(CoreMatchers.not(nullValue())))       // -тело
+                .body("token", CoreMatchers.is(CoreMatchers.not(nullValue())))       // -тело
                 .when()                                                // ЧТО ДЕЛАЕМ (шаги)
-                .post("https://restful-booker.herokuapp.com/auth")       // -пост запрос
+                .post("/auth")                                          // -пост запрос
                 .prettyPeek();                                         //ЛОГИРУЕМ ОТВЕТ
-
     }
 }
