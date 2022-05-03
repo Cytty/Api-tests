@@ -2,17 +2,17 @@
 package ru.cytty.tests;
 
 import io.qameta.allure.*;
-import io.restassured.RestAssured;
+
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.cytty.dao.CreateTokenRequest;
 import ru.cytty.dao.CreateTokenResponse;
-
+import io.restassured.RestAssured;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
@@ -32,7 +32,7 @@ public class CreateTokenBookingTests {
     @BeforeAll
     static void beforeAll() throws IOException {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-        //RestAssured.filters(new AllureRestAssured());
+        RestAssured.filters(new AllureRestAssured());
         properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
         RestAssured.baseURI = properties.getProperty("base.url");
         request = CreateTokenRequest.builder()
@@ -42,6 +42,7 @@ public class CreateTokenBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     //@Description("Creating a token with correct authorisation")
    @Step("Creating a token with correct authorisation")
     void createTokenPositiveTest() {
@@ -66,6 +67,7 @@ public class CreateTokenBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
    // @Step("Creating a token with an incorrect password")
     @Description("Creating a token with an incorrect password")
     void createTokenWithAWrongPasswordNegativeTest() {
@@ -87,6 +89,7 @@ public class CreateTokenBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Creating a token with an incorrect username")
     void createTokenWithAWrongUsernameAndPasswordNegativeTest() {
         Response response = given() //предусловия, подготовка
@@ -108,6 +111,7 @@ public class CreateTokenBookingTests {
 
     //оставила для памяти с комментариями
     @Test
+    @io.qameta.allure.Muted
     void createTokenWithAWrongUsernameAndPasswordNegative2Test() {
         given() //предусловия, подготовка
                 .log()                                                 // ЛОГИРУЕМ

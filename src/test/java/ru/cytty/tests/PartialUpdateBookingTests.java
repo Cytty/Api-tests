@@ -2,6 +2,7 @@ package ru.cytty.tests;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.*;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.*;
@@ -34,6 +35,7 @@ public class PartialUpdateBookingTests {
     @BeforeAll
     static void beforeAll() throws IOException {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        RestAssured.filters(new AllureRestAssured());
         properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
         RestAssured.baseURI = properties.getProperty("base.url");
         request = CreateTokenRequest.builder()
@@ -100,6 +102,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Changing the lastname and the firstname on the booking")
     void PartialUpdateBookingLastAndFirstnameChangePositiveTest() {
         given()
@@ -119,6 +122,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Changing the firstname on the booking")
     void PartialUpdateBookingFirstnameChangePositiveTest() {
         given()
@@ -137,6 +141,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Changing the lastname on the booking")
     void PartialUpdateBookingLastnameChangePositiveTest() {
         given()
@@ -155,6 +160,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Changing the totalprice on the booking")
     void PartialUpdateBookingTotalpriceChangePositiveTest() {
         given()
@@ -173,6 +179,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Changing the depositpaid on the booking")
     void PartialUpdateBookingDepositpaidChangePositiveTest() {
         given()
@@ -191,6 +198,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Changing the bookingdates on the booking")
     void PartialUpdateBookingAllBookingdatesChangePositiveTest() {
         given()
@@ -212,6 +220,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Changing the checkin on the booking")
     void PartialUpdateBookingOnlyCheckinChangePositiveTest() {
         given()
@@ -230,6 +239,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Changing the checkout on the booking")
     void PartialUpdateBookingOnlyCheckoutChangePositiveTest() {
         given()

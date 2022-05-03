@@ -2,6 +2,7 @@ package ru.cytty.tests;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.*;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +43,7 @@ public class DeleteBookingTests {
     static void beforeAll() throws IOException {
         properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
         RestAssured.baseURI = properties.getProperty("base.url");
+        RestAssured.filters(new AllureRestAssured());
         request = CreateTokenRequest.builder()
                 .username(properties.getProperty("username"))
                 .password(properties.getProperty("password"))
@@ -94,6 +96,7 @@ public class DeleteBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Deleting a booking with a cookie")
     void DeleteBookingCookieAuthPositiveTest() {
         given()
@@ -108,6 +111,7 @@ public class DeleteBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Deleting a booking with a token")
     void DeleteBookingAuthorizationPositiveTest() {
         given()
@@ -121,6 +125,7 @@ public class DeleteBookingTests {
     }
 
     @Test
+    @io.qameta.allure.Muted
     @Step("Deleting a booking  without authorisation")
     void DeleteBookingWithoutAuthNegativeTest() {
         given()
