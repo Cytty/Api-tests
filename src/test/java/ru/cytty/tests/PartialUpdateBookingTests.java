@@ -1,20 +1,24 @@
 package ru.cytty.tests;
 
 import com.github.javafaker.Faker;
+import io.qameta.allure.*;
 import io.restassured.RestAssured;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.*;
+import ru.cytty.dao.BookingdatesRequest;
 import ru.cytty.dao.CreateAccountRequest;
 import ru.cytty.dao.CreateTokenRequest;
-import ru.cytty.dao.BookingdatesRequest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
+@Severity(SeverityLevel.BLOCKER)
+@Story("change positions on a booking")
+@Feature("Tests for changes to the booking")
 
 public class PartialUpdateBookingTests {
     private static final String PROPERTIES_FILE_PATH = "src/test/resources/application.properties";
@@ -44,7 +48,7 @@ public class PartialUpdateBookingTests {
                 .firstname(faker.name().fullName())
                 .lastname(faker.name().lastName())
                 .totalprice(faker.hashCode())
-                .depositpaid(true)      //оставила специально, чтобы случайное значение не совпало с заменяемым
+                .depositpaid(true)                          //оставила специально, чтобы случайное значение не совпало с заменяемым
                 .bookingdates(requestBookingdates)
                 .additionalneeds(faker.chuckNorris().fact())
                 .build();
@@ -96,7 +100,8 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void partialUpdateBookingLastAndFirstnameChangePositiveTest() {
+    @Step("Changing the lastname and the firstname on the booking")
+    void PartialUpdateBookingLastAndFirstnameChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -114,7 +119,8 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void partialUpdateBookingFirstnameChangePositiveTest() {
+    @Step("Changing the firstname on the booking")
+    void PartialUpdateBookingFirstnameChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -131,7 +137,8 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void partialUpdateBookingLastnameChangePositiveTest() {
+    @Step("Changing the lastname on the booking")
+    void PartialUpdateBookingLastnameChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -148,7 +155,8 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void partialUpdateBookingTotalpriceChangePositiveTest() {
+    @Step("Changing the totalprice on the booking")
+    void PartialUpdateBookingTotalpriceChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -165,7 +173,8 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void partialUpdateBookingDepositpaidChangePositiveTest() {
+    @Step("Changing the depositpaid on the booking")
+    void PartialUpdateBookingDepositpaidChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -182,25 +191,29 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void partialUpdateBookingAllBookingdatesChangePositiveTest() {
+    @Step("Changing the bookingdates on the booking")
+    void PartialUpdateBookingAllBookingdatesChangePositiveTest() {
         given()
                 .log()
                 .all()
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .header("Cookie", "token=" + token)
-                .body(requestAccount.withBookingdates(requestBookingdates.withCheckin("2018-01-15").withCheckout("2019-01-15")))
+                .body(requestAccount.withBookingdates(requestBookingdates.withCheckin("2018-01-15").withCheckout("2018-01-15")))
+                         // повозилась с генерацией нового значения и новыми переменными, но не справилась с приведением к единому формату.
+                         // форматер отказывался работать с ГетДейт, а туСтринг не работал с форматером. Оставила так.
                 .when()
                 .patch("/booking/" + id)
                 .prettyPeek()
                 .then()
                 .statusCode(200)
                 .body("bookingdates.checkin", equalTo("2018-01-15"))
-                .body("bookingdates.checkout", equalTo("2019-01-15"));
+                .body("bookingdates.checkout", equalTo("2018-01-15"));
     }
 
     @Test
-    void partialUpdateBookingOnlyCheckinChangePositiveTest() {
+    @Step("Changing the checkin on the booking")
+    void PartialUpdateBookingOnlyCheckinChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -217,7 +230,8 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void partialUpdateBookingOnlyCheckoutChangePositiveTest() {
+    @Step("Changing the checkout on the booking")
+    void PartialUpdateBookingOnlyCheckoutChangePositiveTest() {
         given()
                 .log()
                 .all()

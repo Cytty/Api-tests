@@ -15,18 +15,12 @@ public class CreateAccountRequest {
 @Setter
 @Getter
 
-    @JsonProperty("firstname")
-    private String firstname;
-    @JsonProperty("lastname")
+private String firstname;
     private String lastname;
-    @JsonProperty("totalprice")
     private Integer totalprice;
 
-    @JsonProperty("depositpaid")
     private Boolean depositpaid;
-    @JsonProperty("bookingdates")
     private BookingdatesRequest bookingdates;
-    @JsonProperty("additionalneeds")
     private String additionalneeds;
 
 }

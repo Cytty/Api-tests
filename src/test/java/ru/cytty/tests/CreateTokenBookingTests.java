@@ -1,6 +1,7 @@
 
 package ru.cytty.tests;
 
+import io.qameta.allure.*;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.hamcrest.CoreMatchers;
@@ -11,11 +12,15 @@ import ru.cytty.dao.CreateTokenResponse;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+@Severity(SeverityLevel.BLOCKER)
+@Story("create a booking")
+@Feature("Tests to get a token")
 
 public class CreateTokenBookingTests {
     private static final String PROPERTIES_FILE_PATH = "src/test/resources/application.properties";
@@ -27,6 +32,7 @@ public class CreateTokenBookingTests {
     @BeforeAll
     static void beforeAll() throws IOException {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        //RestAssured.filters(new AllureRestAssured());
         properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
         RestAssured.baseURI = properties.getProperty("base.url");
         request = CreateTokenRequest.builder()
@@ -36,6 +42,8 @@ public class CreateTokenBookingTests {
     }
 
     @Test
+    //@Description("Creating a token with correct authorisation")
+   @Step("Creating a token with correct authorisation")
     void createTokenPositiveTest() {
         response = given()
                 .log()
@@ -58,6 +66,8 @@ public class CreateTokenBookingTests {
     }
 
     @Test
+   // @Step("Creating a token with an incorrect password")
+    @Description("Creating a token with an incorrect password")
     void createTokenWithAWrongPasswordNegativeTest() {
         given() //предусловия, подготовка
                 .log()
@@ -77,6 +87,7 @@ public class CreateTokenBookingTests {
     }
 
     @Test
+    @Step("Creating a token with an incorrect username")
     void createTokenWithAWrongUsernameAndPasswordNegativeTest() {
         Response response = given() //предусловия, подготовка
                 .log()
@@ -95,7 +106,7 @@ public class CreateTokenBookingTests {
     }
 
 
-    //оставила для памяти c комментами
+    //оставила для памяти с комментариями
     @Test
     void createTokenWithAWrongUsernameAndPasswordNegative2Test() {
         given() //предусловия, подготовка
@@ -113,5 +124,6 @@ public class CreateTokenBookingTests {
                 .when()                                                // ЧТО ДЕЛАЕМ (шаги)
                 .post("/auth")                                          // -пост запрос
                 .prettyPeek();                                         //ЛОГИРУЕМ ОТВЕТ
+
     }
 }

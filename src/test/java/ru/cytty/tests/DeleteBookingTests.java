@@ -1,13 +1,15 @@
 package ru.cytty.tests;
 
 import com.github.javafaker.Faker;
+import io.qameta.allure.*;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.cytty.dao.BookingdatesRequest;
 import ru.cytty.dao.CreateAccountRequest;
 import ru.cytty.dao.CreateTokenRequest;
-import ru.cytty.dao.BookingdatesRequest;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -15,6 +17,9 @@ import java.util.*;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
+@Severity(SeverityLevel.BLOCKER)
+@Story("delete a booking")
+@Feature("Tests for booking deletion")
 
 public class DeleteBookingTests {
     private static final String PROPERTIES_FILE_PATH = "src/test/resources/application.properties";
@@ -27,6 +32,10 @@ public class DeleteBookingTests {
     static Faker faker = new Faker();
     static String token;
     String id;
+
+    @Severity(SeverityLevel.BLOCKER)
+    @Story("delete a booking")
+    @Feature("Tests for booking delete")
 
 
     @BeforeAll
@@ -49,7 +58,7 @@ public class DeleteBookingTests {
                 .bookingdates(requestBookingdates)
                 .additionalneeds(faker.chuckNorris().fact())
                 .build();
-        token = given() //предусловия, подготовка
+        token = given()
                 .log()
                 .all()
                 .header("Content-Type", "application/json")
@@ -85,7 +94,8 @@ public class DeleteBookingTests {
     }
 
     @Test
-    void deleteBookingCookieAuthPositiveTest() {
+    @Step("Deleting a booking with a cookie")
+    void DeleteBookingCookieAuthPositiveTest() {
         given()
                 .log()
                 .all()
@@ -98,7 +108,8 @@ public class DeleteBookingTests {
     }
 
     @Test
-    void deleteBookingAuthorizationPositiveTest() {
+    @Step("Deleting a booking with a token")
+    void DeleteBookingAuthorizationPositiveTest() {
         given()
                 .log()
                 .all()
@@ -110,7 +121,8 @@ public class DeleteBookingTests {
     }
 
     @Test
-    void deleteBookingWithoutAuthNegativeTest() {
+    @Step("Deleting a booking  without authorisation")
+    void DeleteBookingWithoutAuthNegativeTest() {
         given()
                 .log()
                 .all()

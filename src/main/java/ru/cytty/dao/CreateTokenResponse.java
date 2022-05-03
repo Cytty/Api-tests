@@ -5,7 +5,6 @@ import lombok.Getter;
 
 public class CreateTokenResponse {
     @Getter
-    @JsonProperty ("token")
     private String token;
 
 }
