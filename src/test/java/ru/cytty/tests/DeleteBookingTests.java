@@ -66,7 +66,7 @@ public class DeleteBookingTests {
     }
 
     @Test
-    void DeleteBookingCookieAuthPositiveTest() {
+    void deleteBookingCookieAuthPositiveTest() {
         given()
                 .log()
                 .all()
@@ -79,7 +79,7 @@ public class DeleteBookingTests {
     }
 
     @Test
-    void DeleteBookingAuthorizationPositiveTest() {
+    void deleteBookingAuthorizationPositiveTest() {
         given()
                 .log()
                 .all()
@@ -91,7 +91,7 @@ public class DeleteBookingTests {
     }
 
     @Test
-    void DeleteBookingWithoutAuthNegativeTest() {
+    void deleteBookingWithoutAuthNegativeTest() {
         given()
                 .log()
                 .all()

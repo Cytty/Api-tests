@@ -74,7 +74,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void PartialUpdateBookingLastAndFirstnameChangePositiveTest() {
+    void partialUpdateBookingLastAndFirstnameChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -96,7 +96,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void PartialUpdateBookingFirstnameChangePositiveTest() {
+    void partialUpdateBookingFirstnameChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -115,7 +115,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void PartialUpdateBookingLastnameChangePositiveTest() {
+    void partialUpdateBookingLastnameChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -134,7 +134,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void PartialUpdateBookingTotalpriceChangePositiveTest() {
+    void partialUpdateBookingTotalpriceChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -153,7 +153,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void PartialUpdateBookingDepositpaidChangePositiveTest() {
+    void partialUpdateBookingDepositpaidChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -172,7 +172,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void PartialUpdateBookingAllBookingdatesChangePositiveTest() {
+    void partialUpdateBookingAllBookingdatesChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -195,7 +195,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void PartialUpdateBookingOnlyCheckinChangePositiveTest() {
+    void partialUpdateBookingOnlyCheckinChangePositiveTest() {
         given()
                 .log()
                 .all()
@@ -216,7 +216,7 @@ public class PartialUpdateBookingTests {
     }
 
     @Test
-    void PartialUpdateBookingOnlyCheckoutChangePositiveTest() {
+    void partialUpdateBookingOnlyCheckoutChangePositiveTest() {
         given()
                 .log()
                 .all()
