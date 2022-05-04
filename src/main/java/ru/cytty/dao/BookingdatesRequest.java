@@ -16,7 +16,8 @@ import lombok.With;
 public class BookingdatesRequest {
     @Setter
     @Getter
+    @JsonProperty("checkin")
     private String checkin;
+    @JsonProperty("checkout")
     private String checkout;
-
 }

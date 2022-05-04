@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.cytty</groupId>
-    <artifactId>api-tests</artifactId>
+    <artifactId>Api-tests</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <allure-maven.version>2.15.0</allure-maven.version>
+        <allure-maven.version>2.14.0</allure-maven.version>
         <jackson.version>2.13.2</jackson.version>
         <aspectj.version>1.9.6</aspectj.version>
     </properties>
@@ -33,8 +33,8 @@
                     <systemPropertyVariables>
                         <allure.results.directory>target/allure-results</allure.results.directory>
                     </systemPropertyVariables>
+
                     <testFailureIgnore>true</testFailureIgnore>
-                    <skipTests>false</skipTests>
                     <argLine>
                         -Dfile.encoding=UTF-8
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
@@ -52,20 +52,9 @@
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
                 <version>2.10.0</version>
-<!--                <configuration>-->
-<!--                    <reportVersion>2.15.0</reportVersion>-->
-<!--                </configuration>-->
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.7.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.3.0</version>
+                <configuration>
+                    <reportVersion>2.14.0</reportVersion>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -79,7 +68,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.0</version>
+            <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -110,22 +99,15 @@
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
-            <version>2.15.0</version>
+            <version>2.14.0</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-site-plugin</artifactId>
-            <version>4.0.0-M1</version>
-            <type>maven-plugin</type>
         </dependency>
 
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-rest-assured</artifactId>
-            <version>2.15.0</version>
+            <version>2.14.0</version>
         </dependency>
-
     </dependencies>
 </project>
+

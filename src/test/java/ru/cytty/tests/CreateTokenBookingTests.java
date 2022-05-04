@@ -1,23 +1,23 @@
-
 package ru.cytty.tests;
 
 import io.qameta.allure.*;
-
 import io.qameta.allure.restassured.AllureRestAssured;
+import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.cytty.dao.CreateTokenRequest;
 import ru.cytty.dao.CreateTokenResponse;
-import io.restassured.RestAssured;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsStringIgnoringCase;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 @Severity(SeverityLevel.BLOCKER)
 @Story("create a booking")
 @Feature("Tests to get a token")
@@ -30,7 +30,7 @@ public class CreateTokenBookingTests {
 
 
     @BeforeAll
-    static void beforeAll() throws IOException {
+    static void beforeSuit() throws IOException {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.filters(new AllureRestAssured());
         properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
@@ -43,8 +43,7 @@ public class CreateTokenBookingTests {
 
     @Test
     @io.qameta.allure.Muted
-    //@Description("Creating a token with correct authorisation")
-   @Step("Creating a token with correct authorisation")
+    @Step("Creating a token with correct authorisation")
     void createTokenPositiveTest() {
         response = given()
                 .log()
@@ -68,8 +67,7 @@ public class CreateTokenBookingTests {
 
     @Test
     @io.qameta.allure.Muted
-   // @Step("Creating a token with an incorrect password")
-    @Description("Creating a token with an incorrect password")
+    @Step("Creating a token with an incorrect password")
     void createTokenWithAWrongPasswordNegativeTest() {
         given() //предусловия, подготовка
                 .log()
@@ -106,28 +104,5 @@ public class CreateTokenBookingTests {
                 .prettyPeek();
         assertThat(response.statusCode(), equalTo(200));
         assertThat(response.body().jsonPath().get("reason"), containsStringIgnoringCase("Bad credentials"));
-    }
-
-
-    //оставила для памяти с комментариями
-    @Test
-    @io.qameta.allure.Muted
-    void createTokenWithAWrongUsernameAndPasswordNegative2Test() {
-        given() //предусловия, подготовка
-                .log()                                                 // ЛОГИРУЕМ
-                .method()                                                 // -метод
-                .log()                                                 // ЛОГИРУЕМ
-                .uri()                                                    // -uri
-                .log()                                                 // ЛОГИРУЕМ
-                .body()                                                    // -тело
-                .header("Content-Type", "application/json")      // ПОДГОТАВЛИВАЕМ ЗАГОЛОВОК
-                .body(request)
-                .expect()                                              // ПРОВЕРЯЕМ
-                .statusCode(200)                                            // -статус код
-                .body("token", CoreMatchers.is(CoreMatchers.not(nullValue())))       // -тело
-                .when()                                                // ЧТО ДЕЛАЕМ (шаги)
-                .post("/auth")                                          // -пост запрос
-                .prettyPeek();                                         //ЛОГИРУЕМ ОТВЕТ
-
     }
 }
