@@ -1,104 +1,55 @@
 package ru.cytty.tests;
 
-import com.github.javafaker.Faker;
-import io.restassured.RestAssured;
+import io.qameta.allure.*;
+import lombok.ToString;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.cytty.dao.CreateAccountRequest;
-import ru.cytty.dao.CreateTokenRequest;
-import ru.cytty.dao.BookingdatesRequest;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
 
-public class DeleteBookingTests {
-    private static final String PROPERTIES_FILE_PATH = "src/test/resources/application.properties";
-    private static CreateTokenRequest request;
-    private static CreateAccountRequest requestAccount;
-    private static BookingdatesRequest requestBookingdates;
-    static Properties properties = new Properties();
+@Severity(SeverityLevel.MINOR)
+@Story("Delete a booking")
+@Feature("Tests for booking deletion")
+@ToString
 
-    static SimpleDateFormat formater = new SimpleDateFormat("dd-MM-yyyy");
-    static Faker faker = new Faker();
-    static String token;
-    String id;
-
+public class DeleteBookingTests extends BaseTest {
+    final static Logger logger = LoggerFactory.getLogger(DeleteBookingTests.class);
 
     @BeforeAll
-    static void beforeAll() throws IOException {
-        properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
-        RestAssured.baseURI = properties.getProperty("base.url");
-        request = CreateTokenRequest.builder()
-                .username(properties.getProperty("username"))
-                .password(properties.getProperty("password"))
-                .build();
-        requestBookingdates = BookingdatesRequest.builder()
-                .checkin(formater.format(faker.date().birthday().getDate()))
-                .checkout(formater.format(faker.date().birthday().getDate()))
-                .build();
-        requestAccount = CreateAccountRequest.builder()
-                .firstname(faker.name().fullName())
-                .lastname(faker.name().lastName())
-                .totalprice(faker.hashCode())
-                .depositpaid(faker.bool().bool())
-                .bookingdates(requestBookingdates)
-                .additionalneeds(faker.chuckNorris().fact())
-                .build();
-        token = given() //предусловия, подготовка
-                .log()
-                .all()
-                .header("Content-Type", "application/json")
-                .body(request)
-                .expect()
-                .statusCode(200)
-                .body("token", is(not(nullValue())))
-                .when() // шаг(и)
-                .post("/auth")
-                .prettyPeek()
-                .body()
-                .jsonPath()
-                .get("token")
-                .toString();
+    static void beforeSuit() {
+        logger.info("Start of DeleteBookingTests");
     }
 
-    @BeforeEach
-    void setUp() {
-        id = given()
-                .log()
-                .all()
-                .header("Content-Type", "application/json")
-                .body(requestAccount)
-                .expect()
-                .statusCode(200)
-                .when()
-                .post("/booking")
-                .prettyPeek()
-                .body()
-                .jsonPath()
-                .get("bookingid")
-                .toString();
+    @AfterAll
+    static void afterSuit() {
+        logger.info("End of DeleteBookingTests");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Deleting a booking with a cookie")
     void deleteBookingCookieAuthPositiveTest() {
+        logger.info("Start of tests 'Deleting a booking with a cookie'");
         given()
                 .log()
-                .all()
+                .headers()
+                //.all()
                 .header("Cookie", "token=" + token)
                 .when()
                 .delete("/booking/" + id)
-                .prettyPeek()
+                // .prettyPeek()
                 .then().statusCode(201);
-
+        logger.info("End of tests 'Deleting a booking with a cookie'");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Deleting a booking with a token")
     void deleteBookingAuthorizationPositiveTest() {
+        logger.info("Start of tests 'Deleting a booking with a token'");
         given()
                 .log()
                 .all()
@@ -107,10 +58,14 @@ public class DeleteBookingTests {
                 .delete("/booking/" + id)
                 .prettyPeek()
                 .then().statusCode(201);
+        logger.info("End of tests 'Deleting a booking with a token'");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Deleting a booking  without authorisation")
     void deleteBookingWithoutAuthNegativeTest() {
+        logger.info("Start of tests 'Deleting a booking  without authorisation'");
         given()
                 .log()
                 .all()
@@ -118,6 +73,7 @@ public class DeleteBookingTests {
                 .delete("/booking/" + id)
                 .prettyPeek()
                 .then().statusCode(403);
-
+        logger.info("End of tests 'Deleting a booking  without authorisation'");
     }
+
 }

@@ -1,102 +1,52 @@
 package ru.cytty.tests;
 
-import com.github.javafaker.Faker;
-import io.restassured.RestAssured;
-import org.hamcrest.CoreMatchers;
-import org.junit.jupiter.api.*;
-import ru.cytty.dao.CreateAccountRequest;
-import ru.cytty.dao.CreateTokenRequest;
-import ru.cytty.dao.BookingdatesRequest;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-import java.text.SimpleDateFormat;
+import io.qameta.allure.*;
+import lombok.ToString;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
 
-public class PartialUpdateBookingTests {
-    private static final String PROPERTIES_FILE_PATH = "src/test/resources/application.properties";
-    private static CreateTokenRequest request;
-    private static BookingdatesRequest requestBookingdates;
-    private static CreateAccountRequest requestAccount;
-    static Properties properties = new Properties();
-    static SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
-    static Faker faker = new Faker();
-    static String token;
-    String id;
+@Severity(SeverityLevel.NORMAL)
+@Story("Change positions on a booking")
+@Feature("Tests for changes to the booking")
+@ToString
+public class PartialUpdateBookingTests extends BaseTest {
+    final static Logger logger = LoggerFactory.getLogger(PartialUpdateBookingTests.class);
 
     @BeforeAll
-    static void beforeAll() throws IOException {
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-        properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
-        RestAssured.baseURI = properties.getProperty("base.url");
-        request = CreateTokenRequest.builder()
-                .username(properties.getProperty("username"))
-                .password(properties.getProperty("password"))
-                .build();
-        requestBookingdates = BookingdatesRequest.builder()
-                .checkin(formater.format(faker.date().birthday().getDate()))
-                .checkout(formater.format(faker.date().birthday().getDate()))
-                .build();
-        requestAccount = CreateAccountRequest.builder()
-                .firstname(faker.name().fullName())
-                .lastname(faker.name().lastName())
-                .totalprice(faker.hashCode())
-                .depositpaid(true)      //оставила специально, чтобы случайное значение не совпало с заменяемым
-                .bookingdates(requestBookingdates)
-                .additionalneeds(faker.chuckNorris().fact())
-                .build();
-        token = given() //предусловия, подготовка
-                .log()
-                .all()
-                .header("Content-Type", "application/json")
-                .body(request)
-                .expect()
-                .statusCode(200)
-                .body("token", is(CoreMatchers.not(nullValue())))
-                .when()
-                .post("/auth")
-                .prettyPeek()
-                .body()
-                .jsonPath()
-                .get("token")
-                .toString();
+    static void beforeSuit() {
+        logger.info("Start of PartialUpdateBookingTests");
     }
 
-    @BeforeEach
-    void setUp() {
-        id = given()
-                .log()
-                .all()
-                .header("Content-Type", "application/json")
-                .body(requestAccount)
-                .expect()
-                .statusCode(200)
-                .when()
-                .post("/booking")
-                .prettyPeek()
-                .body()
-                .jsonPath()
-                .get("bookingid")
-                .toString();
+    @AfterAll
+    static void afterSuit() {
+        logger.info("End of PartialUpdateBookingTests");
     }
-
+    @Step("Deleting a booking")
     @AfterEach
     void tearDown() {
         given()
                 .log()
                 .all()
-                .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQxMjM=")
+                .header("Cookie", "token=" + token)
                 .when()
                 .delete("/booking/" + id)
                 .prettyPeek()
                 .then().statusCode(201);
+        logger.info("The booking " + id + " deleted");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Changing the lastname and the firstname on the booking")
     void partialUpdateBookingLastAndFirstnameChangePositiveTest() {
+        logger.info("Start of tests 'Changing the lastname and the firstname on the booking'");
         given()
                 .log()
                 .all()
@@ -111,10 +61,14 @@ public class PartialUpdateBookingTests {
                 .statusCode(200)
                 .body("firstname", equalTo("Bob"))
                 .body("lastname", equalTo("Gray"));
+        logger.info("End of tests 'Changing the lastname and the firstname on the booking'");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Changing the firstname on the booking")
     void partialUpdateBookingFirstnameChangePositiveTest() {
+        logger.info("Start of tests 'Changing the firstname on the booking'");
         given()
                 .log()
                 .all()
@@ -128,10 +82,14 @@ public class PartialUpdateBookingTests {
                 .then()
                 .statusCode(200)
                 .body("firstname", equalTo("Bob"));
+        logger.info("End of tests 'Changing the firstname on the booking'");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Changing the lastname on the booking")
     void partialUpdateBookingLastnameChangePositiveTest() {
+        logger.info("Start of tests 'Changing the lastname on the booking'");
         given()
                 .log()
                 .all()
@@ -145,10 +103,14 @@ public class PartialUpdateBookingTests {
                 .then()
                 .statusCode(200)
                 .body("lastname", equalTo("Gray"));
+        logger.info("End of tests 'Changing the lastname on the booking'");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Changing the totalprice on the booking")
     void partialUpdateBookingTotalpriceChangePositiveTest() {
+        logger.info("Start of tests 'Changing the totalprice on the booking'");
         given()
                 .log()
                 .all()
@@ -162,10 +124,14 @@ public class PartialUpdateBookingTests {
                 .then()
                 .statusCode(200)
                 .body("totalprice", equalTo(2000));
+        logger.info("End of tests 'Changing the totalprice on the booking'");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Changing the depositpaid on the booking")
     void partialUpdateBookingDepositpaidChangePositiveTest() {
+        logger.info("Start of tests 'Changing the depositpaid on the booking'");
         given()
                 .log()
                 .all()
@@ -179,28 +145,36 @@ public class PartialUpdateBookingTests {
                 .then()
                 .statusCode(200)
                 .body("depositpaid", equalTo(false));
+        logger.info("End of tests 'Changing the depositpaid on the booking'");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Changing the bookingdates on the booking")
     void partialUpdateBookingAllBookingdatesChangePositiveTest() {
+        logger.info("Start of tests 'Changing the bookingdates on the booking'");
         given()
                 .log()
                 .all()
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .header("Cookie", "token=" + token)
-                .body(requestAccount.withBookingdates(requestBookingdates.withCheckin("2018-01-15").withCheckout("2019-01-15")))
+                .body(requestAccount.withBookingdates(requestBookingdates.withCheckin("2018-01-15").withCheckout("2018-01-15")))
                 .when()
                 .patch("/booking/" + id)
                 .prettyPeek()
                 .then()
                 .statusCode(200)
                 .body("bookingdates.checkin", equalTo("2018-01-15"))
-                .body("bookingdates.checkout", equalTo("2019-01-15"));
+                .body("bookingdates.checkout", equalTo("2018-01-15"));
+        logger.info("End of tests 'Changing the bookingdates on the booking'");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Changing the checkin on the booking")
     void partialUpdateBookingOnlyCheckinChangePositiveTest() {
+        logger.info("Start of tests 'Changing the checkin on the booking'");
         given()
                 .log()
                 .all()
@@ -214,10 +188,14 @@ public class PartialUpdateBookingTests {
                 .then()
                 .statusCode(200)
                 .body("bookingdates.checkin", equalTo("2018-01-15"));
+        logger.info("End of tests 'Changing the checkin on the booking'");
     }
 
     @Test
+    @io.qameta.allure.Muted
+    @Step("Changing the checkout on the booking")
     void partialUpdateBookingOnlyCheckoutChangePositiveTest() {
+        logger.info("Start of tests 'Changing the checkout on the booking'");
         given()
                 .log()
                 .all()
@@ -231,6 +209,7 @@ public class PartialUpdateBookingTests {
                 .then()
                 .statusCode(200)
                 .body("bookingdates.checkout", equalTo("2019-01-15"));
+        logger.info("End of tests 'Changing the checkout on the booking'");
     }
 }
 

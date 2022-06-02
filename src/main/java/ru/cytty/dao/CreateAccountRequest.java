@@ -12,8 +12,8 @@ import lombok.With;
 @With
 
 public class CreateAccountRequest {
-@Setter
-@Getter
+    @Setter
+    @Getter
 
     @JsonProperty("firstname")
     private String firstname;

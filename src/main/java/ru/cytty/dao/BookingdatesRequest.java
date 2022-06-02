@@ -20,5 +20,4 @@ public class BookingdatesRequest {
     private String checkin;
     @JsonProperty("checkout")
     private String checkout;
-
 }
